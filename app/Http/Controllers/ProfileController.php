@@ -28,10 +28,19 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
+        if(!empty($request->file('photo'))){
+         
+            $photo = $request->file('photo');
+            $ext = $photo->getClientOriginalExtension();
+            $photoName = "user-".rand(10000, 99999).".".$ext;
+            $photo->move('photo/', $photoName);
+        };
+
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
+        $request->user()->photo = $photoName;
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

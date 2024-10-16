@@ -35,9 +35,18 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+
+        $photo = $request->file('photo');
+        $ext = $photo->getClientOriginalExtension();
+        $photoName = "user-".rand(10000, 99999).".".$ext;
+        $photo->move('photo/', $photoName);
+
         $user = User::create([
             'name' => $request->name,
+            'address' => $request->address,
+            'photo' => $photoName,
             'email' => $request->email,
+            'level' => 'user',
             'password' => Hash::make($request->password),
         ]);
 
